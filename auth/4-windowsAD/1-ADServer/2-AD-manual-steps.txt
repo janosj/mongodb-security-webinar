@@ -1,0 +1,47 @@
+To connect to your Windows Server:
+(see here: https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/connecting_to_windows_instance.html)
+  - Install the Microsoft Remote Desktop client on your local desktop.
+  - From your browser, access the AWS IAM console and navigate to the Windows Server EC2 instance.
+  - Click Connect (in the top row of buttons, next to Instance state).
+  - Click the RDP client tab.
+  - Click the "Download remote desktop file" button.
+  - Below that, click "Get Password", which prompts you to upload your private PEM file.
+  - Copy the decrypted password.
+  - Double-click the RDP file to launch and supply the password.
+
+To install and configure Active Directory:
+
+The following config steps come from here:
+https://rdr-it.com/en/windows-server-2022-installation-of-an-active-directory-domain-controller/
+
+A note on terminology: A domain controller (DC) is any server that is running Active Directory Domain Services (AD DS). 
+At least one domain controller is required.
+
+Install DS Role via Powershell:
+  Install-windowsfeature -name AD-Domain-Services –IncludeManagementTools
+
+Configuration Steps (after installing the DS role):
+(note: on several of these steps, you may have to wait for some background tasks to complete)
+  - Launch Server Manager
+  - Click notification icon (top-right) > Promote this server to a domain controller
+  - Select Add new forest. Specify Root domain: mycompany.local
+  - Accept default Domain Controller Options. Specify password, e.g. Password1.
+  - At DNS Options, ignore the DNS delegation error and click Next.
+  - Wait for the NetBIOS domain name to be generated, then click Next.
+  - Accept default Paths (click Next).
+  - At Review Options, click Next.
+  - Verification should pass successfully. Click Install.
+  - Post Installation, the server will restart as a Domain Controller.
+
+Login again using the same decrypted password as before. The account is now <DOMAIN>\Administrator.
+Additional tools will now be available via the Windows Launch button.
+Launch Active Directory Users and Computers, under Windows Administrative Tools.
+Navigate to Users, under your new domain (e.g. mycompany.local).
+Create two new users:
+  Maple Tree, mapletree@mycompany.local, Password1
+  Daisy Flower, daisyflower@mycompany.local, Password1
+Clear all check boxes about changing passwords etc.
+
+Active Directory installation and configuration is now complete!
+Proceed with the next set of scripts to install and configure a MongoDB database.
+

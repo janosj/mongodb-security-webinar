@@ -1,0 +1,5 @@
+Combine into a single script:
+ - create admin user
+ - enable security in conf file
+ - restart service
+
